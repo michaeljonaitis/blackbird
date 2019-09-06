@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: blackbird/Dockerfile.prod
+    command: gunicorn blackbird.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    env_file: blackbird/.env
+    depends_on:
+      - db
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+  db:
+    image: postgres:11.2-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file: blackbird/.env.db
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+    ports:
+      - 1338:80
+    depends_on:
+      - web
+volumes:
+  postgres_data:
+  static_volume:
