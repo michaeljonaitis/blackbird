@@ -1,0 +1,65 @@
+version: 2
+jobs:
+  one:
+    working_directory: ~/positron
+    docker:
+      - image: circleci/python:3.6.7
+      - image: circleci/postgres:9.6.2
+        environment:
+          POSTGRES_USER: blackbird
+          POSTGRES_DB: blackbird
+          POSTGRES_PASSWORD: blackbird
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - run: sudo chown -R circleci:circleci /usr/local/share
+      - run: pip install -r requirements.pip
+      - run: psql -d template1 -U blackbird -p blackbird -h localhost -p 5432 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
+      - run: python manage.py test
+      - run: sudo python setup.py sdist
+      - run: mkdir -p workspace
+      - run: cp -r dist workspace
+      - run: echo "A first hello"
+      - run: echo "Trying out workspaces" > workspace/echo-output
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - dist
+  two:
+    docker:
+      - image: circleci/python:3.6.7
+      - image: circleci/postgres:9.6.2
+        environment:
+         POSTGRES_USER: positron
+         POSTGRES_DB: positron
+         POSTGRES_PASSWORD: positron
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - run: sudo chown -R circleci:circleci /usr/local/share
+      - run: sudo mkdir -p /var/log/positron/
+      - run: sudo touch /var/log/positron/positron-collegeoverview.log
+      - run: sudo chown -R circleci:circleci /var/log/positron/positron-collegeoverview.log
+      - run: psql -d template1 -U positron -p positron -h localhost -p 5432 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
+      - run: echo "A more familiar hi"
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: workspace
+
+      - run: pip install workspace/dist/Positron*
+workflows:
+  version: 2
+  one_and_two:
+    jobs:
+      - one
+      - two:
+          requires:
+            - one
+
