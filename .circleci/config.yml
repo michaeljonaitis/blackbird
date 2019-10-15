@@ -4,12 +4,13 @@ jobs:
     working_directory: ~/blackbird
     docker:
       - image: circleci/python:3.6.7
+        environment:
+          PIPENV_PIPFILE: /blackbird/blackbird/Pipfile
       - image: circleci/postgres:9.6.2
         environment:
           POSTGRES_USER: blackbird
           POSTGRES_DB: blackbird
           POSTGRES_PASSWORD: blackbird
-          PIPENV_PIPFILE: /blackbird/blackbird/Pipfile
     steps:
       - checkout
       - run: sudo apt-get update
