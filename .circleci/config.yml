@@ -18,7 +18,7 @@ jobs:
       - run: sudo chown -R circleci:circleci /usr/local/share
       - run: pip install --upgrade pip
       - run: pip install pipenv
-      - run: pipenv install
+      - run: pipenv install blackbird/Pipfile
       - run: psql -d template1 -U blackbird -p blackbird -h localhost -p 5432 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
       - run: python blackbird/manage.py test
       - run: sudo python setup.py sdist
