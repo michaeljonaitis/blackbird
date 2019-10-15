@@ -9,6 +9,7 @@ jobs:
           POSTGRES_USER: blackbird
           POSTGRES_DB: blackbird
           POSTGRES_PASSWORD: blackbird
+          PIPENV_PIPFILE: /blackbird/blackbird/Pipfile
     steps:
       - checkout
       - run: sudo apt-get update
