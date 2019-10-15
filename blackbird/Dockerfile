@@ -14,7 +14,7 @@ RUN pip install psycopg2
 RUN pip install --upgrade pip
 RUN pip install pipenv
 COPY ./Pipfile /usr/src/app/Pipfile
-RUN pipenv install
+RUN pipenv install --skip-lock --system --dev
 
 COPY . /usr/src/app/
 
