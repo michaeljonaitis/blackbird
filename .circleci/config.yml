@@ -24,17 +24,13 @@ jobs:
       - run: pipenv install
       - run: psql -d template1 -U blackbird -p blackbird -h localhost -p 5432 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
       - run: pipenv run python blackbird/manage.py test
-      - run: sudo python setup.py sdist
       - run: mkdir -p workspace
-      - run: cp -r dist workspace
       - run: echo "A first hello"
       - run: echo "Trying out workspaces" > workspace/echo-output
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory
           root: workspace
-          # Must be relative path from root
-          paths:
-            - dist
+      
 workflows:
   version: 2
   one_and_two:
