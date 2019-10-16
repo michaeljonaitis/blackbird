@@ -25,9 +25,9 @@ jobs:
       - run: psql -d template1 -U blackbird -p blackbird -h localhost -p 5432 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
       - run: (cd blackbird && pipenv run python manage.py test)
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: test-results
+          path: blackbird/test-results
       - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: test-results
+          path: blackbird/test-results
           destination: tr1
       - run: mkdir -p workspace
       - run: echo "A first hello"
